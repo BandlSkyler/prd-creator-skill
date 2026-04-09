@@ -10,7 +10,9 @@
 ### 实现思路
 [从技术角度描述如何实现，重点在关键决策和实现路径]
 
-### 技术时序图
+### 技术时序图（系统视角）
+
+> 本图描述**系统内部组件间的调用链**（Controller→Service→Cache→DB），关注"怎么实现"。用户交互流程见 prd.md 的业务时序图。
 
 ```mermaid
 sequenceDiagram
@@ -102,13 +104,13 @@ CREATE TABLE `{table_name}` (
 
 **字段说明**:
 
-| 字段 | 类型 | 约束 | 说明 |
-|------|------|------|------|
-| id | BIGINT | PK | 主键 |
-| name | VARCHAR(100) | Not Null, Unique | [含义] |
-| status | TINYINT | Not Null, Default 1 | 1=启用, 0=禁用 |
-| config | JSON | Nullable | 结构见下方 |
-| deleted_at | DATETIME | Nullable | NULL=未删除 |
+> DDL 中 COMMENT 已包含基本字段含义，下表仅补充 DDL 无法表达的业务规则和约束说明。
+
+| 字段 | 补充说明 |
+|------|----------|
+| status | 状态流转：启用→禁用（不可反向） |
+| config | 结构见下方 JSON 字段定义 |
+| deleted_at | NULL=未删除，软删除后唯一索引通过 deleted_at 区分 |
 
 **索引设计**:
 
@@ -151,24 +153,10 @@ CREATE TABLE `{table_name}` (
 
 ### 通用规范
 
-**请求头**:
-```
-Content-Type: application/json
-Authorization: Bearer {access_token}
-X-Request-ID: {uuid}
-```
-
-**统一响应格式**:
-```json
-// 成功
-{"code": 0, "message": "success", "data": {}}
-
-// 错误
-{"code": 100001, "message": "参数错误: xxx 不能为空"}
-
-// 分页
-{"code": 0, "data": {"list": [], "total": 100, "page": 1, "pageSize": 20}}
-```
+> 请求头、统一响应格式、分页格式等通用约定已定义在项目 README.md 中，此处不再重复。如项目 README 尚未定义，请先在 README 中补充以下内容后再引用：
+> - 请求头规范（Content-Type / Authorization / X-Request-ID）
+> - 统一响应格式（code / message / data）
+> - 分页响应格式（list / total / page / pageSize）
 
 ### 接口总览
 

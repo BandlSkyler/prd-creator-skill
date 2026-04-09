@@ -41,7 +41,9 @@ flowchart TD
     Result -->|失败| Error[展示错误提示]
 ```
 
-### 时序图
+### 时序图（业务视角）
+
+> 本图描述**用户与系统的交互**，关注"谁做了什么"。技术实现细节（缓存、DB、内部调用链）见 [tdd.md](./tdd.md) 的技术时序图。
 
 ```mermaid
 sequenceDiagram
